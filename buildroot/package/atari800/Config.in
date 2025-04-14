@@ -1,0 +1,6 @@
+config BR2_PACKAGE_ATARI800
+    bool "atari800"
+    help
+      Atari800 is an emulator for the Atari 8-bit computers.
+
+      https://github.com/atari800/atari800
