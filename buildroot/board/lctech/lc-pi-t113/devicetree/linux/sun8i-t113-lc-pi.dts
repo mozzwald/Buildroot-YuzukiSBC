@@ -8,7 +8,7 @@
 #include "sun8i-t113.dtsi"
 
 / {
-	model = "MangoPi MQ-Dual";
+	model = "LC-PI T113-S3";
 	compatible = "allwinner,sun20i-d1", "allwinner,sun8i";
 
 	aliases {
@@ -16,14 +16,14 @@
 		mmc0 = &mmc0;
 		serial0 = &uart0;
 		serial1 = &uart1;
-		/* serial3 = &uart3; */
 		serial5 = &uart5;
         spi0 = &spi0;
+		i2s0_pins = &i2s0_pins;
  	};
 
 	chosen {
 		stdout-path = "serial0:115200n8";
-        bootargs = "console=ttyS0,115200 earlyprintk";
+        bootargs = "console=ttyS0,115200 earlyprintk dynamic_debug.verbose=1 dynamic_debug.file=sound/soc/sunxi/sun4i-i2s.c dynamic_debug.file=sound/soc/sunxi/sun4i-codec.c dynamic_debug.file=sound/soc/sunxi/sun20i-d1-codec-analog.c";
 		// bootargs = "mem=128M cma=72M root=/dev/mmcblk0p2 init=/sbin/init rootwait earlyprintk=sunxi-uart,0x02501400 console=tty0 console=ttyS5,115200";
 		// bootargs = "mem=128M cma=64M root=/dev/mmcblk0p2 init=/sbin/init rootwait console=ttyS5,115200 earlyprintk=sunxi-uart,0x02501400";
 	};
@@ -33,6 +33,7 @@
 		regulator-name = "vcc";
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
+		status = "okay";
 	};
 
 	reg_usbvbus: usbvbus {
@@ -49,6 +50,7 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 		vin-supply = <&reg_vcc>;
+		status = "okay";
 	};
 
 	reg_avdd2v8: avdd2v8 {
@@ -67,31 +69,13 @@
 		vin-supply = <&reg_vcc>;
 	};
 
-
-	dmic_codec: dmic-codec {
-		compatible = "dmic-codec";
-		num-channels = <2>;
-		#sound-dai-cells = <0>;
-	};
-
-	dmic-sound {
-		compatible = "simple-audio-card";
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		simple-audio-card,dai-link@0 {
-			format = "pdm";
-			frame-master = <&link0_cpu>;
-			bitclock-master = <&link0_cpu>;
-
-			link0_cpu: cpu {
-				sound-dai = <&dmic>;
-			};
-
-			link0_codec: codec {
-				sound-dai = <&dmic_codec>;
-			};
-		};
+	reg_vdd_1v8: vdd_1v8 {
+		compatible = "regulator-fixed";
+		regulator-name = "vdd_1v8";
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <1800000>;
+		vin-supply = <&reg_vcc_3v3>;
+		status = "okay";
 	};
 
 	leds {
@@ -116,28 +100,29 @@
 		pinctrl-names = "default";
 	};
 
-	headphone-sound {
-		compatible = "simple-audio-card";
-		simple-audio-card,name = "T113‑Headphone";
-		/* the internal codec is both the CPU‑DAI and the CODEC‑DAI */
-		simple-audio-card,bitclock-master = <&codec>;
-		simple-audio-card,frame-master    = <&codec>;
-		simple-audio-card,format = "dsp_a";        /* codec <‑‑> codec */
-
-		cpu {   /* “CPU” side of the link */
-			sound-dai = <&codec>;
-		};
-
-		codec { /* analogue side of the link */
-			sound-dai = <&codec>;
-		};
+	i2s0_pins: i2s0_pins {
+		pins = "PC1", "PC2", "PC3", "PC4", "PC5";
+		function = "i2s0";
+		drive-strength = <10>;
+		bias-disable;
 	};
+
 };
 
-&reg_aldo {
-	regulator-min-microvolt = <1800000>;
-	regulator-max-microvolt = <1800000>;
-	vdd33-supply = <&reg_vcc_3v3>;
+&i2s0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2s0_pins>;
+	status = "okay";
+};
+
+&codec {
+	status = "okay";
+	allwinner,audio-routing =
+		"Headphone",  "HP";
+};
+
+&codec_analog {
+	status = "okay";
 };
 
 &cpu0 {
@@ -174,27 +159,6 @@
 		remote-endpoint = <&panel_input>;
 	};
 };
-
-// &dsi {
-// 	pinctrl-0 = <&dsi_4lane_pins>;
-// 	pinctrl-names = "default";
-// 	status = "disabled";
-
-// 	panel: panel@0 {
-// 		reg = <0>;
-// 		compatible = "lg,lh500wx1-sd03";
-// 		pinctrl-names = "default";
-// /*
-// 		pinctrl-0 = <&panel_pin>;
-
-// 		port {
-// 				panel_in: endpoint {
-// 						remote-endpoint = <&dsi0_out>;
-// 				};
-// 		};
-// */
-// 	};
-// };
 
 &pio {
 
@@ -251,13 +215,11 @@
 	};
 };
 
-/* Disable UART3
 &uart3 {
 	pinctrl-0 = <&uart3_pb_pins>;
 	pinctrl-names = "default";
-	status = "okay";
+	status = "disabled";
 };
-*/
 
 &uart5 {
 	pinctrl-0 = <&uart5_pb4_pins>;
@@ -359,19 +321,6 @@
     };
 };
 
-&codec {
-	routing = "Headphone Jack", "HPOUTL",
-		  "Headphone Jack", "HPOUTR",
-		  "Headset Microphone", "MICIN3"; 
-
-/*		  "LINEINL", "HPOUTL",
-		  "LINEINR", "HPOUTR";
-*/
-	widgets = "Microphone", "Headset Microphone",
-		  "Headphone", "Headphone Jack";
-	status = "okay";
-};
-
 &usb_otg {
 	dr_mode = "otg";
 	status = "okay";
@@ -426,15 +375,6 @@
 	status = "disabled";
 };
 
-// &can0 {
-// 	pinctrl-names = "default";
-// 	pinctrl-0 = <&can0_pins>;
-// 	status = "okay";
-// };
-
-// &can1 {
-// 	pinctrl-names = "default";
-// 	pinctrl-0 = <&can1_pins>;
-// 	status = "disabled";
-// };
-
+&dma {
+    status = "okay";
+};

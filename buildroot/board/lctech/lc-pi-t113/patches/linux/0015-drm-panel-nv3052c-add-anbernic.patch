@@ -1,16 +1,6 @@
---- linux-6.1.24-orig/drivers/gpu/drm/panel/panel-newvision-nv3052c.c	2023-04-13 09:55:40.000000000 -0500
-+++ linux-6.1.24/drivers/gpu/drm/panel/panel-newvision-nv3052c.c	2025-04-12 12:53:34.823258839 -0500
-@@ -11,7 +11,8 @@
- #include <linux/gpio/consumer.h>
- #include <linux/media-bus-format.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
- #include <linux/spi/spi.h>
- #include <video/mipi_display.h>
-@@ -19,11 +20,18 @@
+--- linux-v6.6.87_orig/drivers/gpu/drm/panel/panel-newvision-nv3052c.c	2025-04-10 07:37:44.000000000 -0500
++++ linux-v6.6.87/drivers/gpu/drm/panel/panel-newvision-nv3052c.c	2025-04-14 14:48:45.469971143 -0500
+@@ -20,11 +20,18 @@
  #include <drm/drm_modes.h>
  #include <drm/drm_panel.h>
  
@@ -29,7 +19,7 @@
  };
  
  struct nv3052c {
-@@ -35,15 +43,401 @@
+@@ -36,15 +43,401 @@
  	struct gpio_desc *reset_gpio;
  };
  
@@ -438,7 +428,7 @@
  	{ 0xe3, 0x00 },
  	{ 0x40, 0x00 },
  	{ 0x03, 0x40 },
-@@ -61,15 +455,15 @@
+@@ -62,15 +455,15 @@
  	{ 0x25, 0x06 },
  	{ 0x26, 0x14 },
  	{ 0x27, 0x14 },
@@ -459,7 +449,7 @@
  	{ 0xa0, 0x55 },
  	{ 0xa1, 0x50 },
  	{ 0xa4, 0x9c },
-@@ -93,123 +487,126 @@
+@@ -94,123 +487,126 @@
  	{ 0xb8, 0x26 },
  	{ 0xf0, 0x00 },
  	{ 0xf6, 0xc0 },
@@ -703,7 +693,7 @@
  	{ 0x01, 0x01 },
  	{ 0x02, 0xda },
  	{ 0x03, 0xba },
-@@ -226,10 +623,10 @@
+@@ -227,10 +623,10 @@
  	{ 0x0e, 0x48 },
  	{ 0x0f, 0x38 },
  	{ 0x10, 0x2b },
@@ -718,7 +708,7 @@
  };
  
  static inline struct nv3052c *to_nv3052c(struct drm_panel *panel)
-@@ -240,6 +637,8 @@
+@@ -241,6 +637,8 @@
  static int nv3052c_prepare(struct drm_panel *panel)
  {
  	struct nv3052c *priv = to_nv3052c(panel);
@@ -727,7 +717,7 @@
  	struct mipi_dbi *dbi = &priv->dbi;
  	unsigned int i;
  	int err;
-@@ -256,9 +655,9 @@
+@@ -257,9 +655,9 @@
  	gpiod_set_value_cansleep(priv->reset_gpio, 0);
  	usleep_range(5000, 20000);
  
@@ -740,24 +730,24 @@
  
  		if (err) {
  			dev_err(priv->dev, "Unable to set register: %d\n", err);
-@@ -378,13 +777,15 @@
+@@ -379,6 +777,8 @@
  	struct nv3052c *priv;
  	int err;
  
-+    printk(KERN_INFO "nv3052c: probe() called for SPI device %s\n", dev_name(&spi->dev));
++	printk(KERN_INFO "nv3052c: probe() called for SPI device %s\n", dev_name(&spi->dev));
 +
  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
  	if (!priv)
  		return -ENOMEM;
- 
+@@ -386,6 +786,7 @@
  	priv->dev = dev;
  
--	priv->panel_info = of_device_get_match_data(dev);
+ 	priv->panel_info = of_device_get_match_data(dev);
 +	priv->panel_info = device_get_match_data(dev);
  	if (!priv->panel_info)
  		return -EINVAL;
  
-@@ -452,6 +853,36 @@
+@@ -453,6 +854,36 @@
  	},
  };
  
@@ -794,7 +784,7 @@
  static const struct nv3052c_panel_info ltk035c5444t_panel_info = {
  	.display_modes = ltk035c5444t_modes,
  	.num_modes = ARRAY_SIZE(ltk035c5444t_modes),
-@@ -459,10 +890,44 @@
+@@ -460,10 +891,44 @@
  	.height_mm = 64,
  	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
  	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE,
@@ -839,7 +829,7 @@
  	{ /* sentinel */ }
  };
  MODULE_DEVICE_TABLE(of, nv3052c_of_match);
-@@ -472,6 +937,7 @@
+@@ -473,6 +938,7 @@
  		.name = "nv3052c",
  		.of_match_table = nv3052c_of_match,
  	},
@@ -847,7 +837,7 @@
  	.probe = nv3052c_probe,
  	.remove = nv3052c_remove,
  };
-@@ -479,4 +945,6 @@
+@@ -480,4 +946,6 @@
  
  MODULE_AUTHOR("Paul Cercueil <paul@crapouillou.net>");
  MODULE_AUTHOR("Christophe Branchereau <cbranchereau@gmail.com>");
