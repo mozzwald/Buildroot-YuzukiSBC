@@ -1,0 +1,8 @@
+config BR2_PACKAGE_ATARI800_NETSIO
+    bool "atari800-netsio"
+    select BR2_PACKAGE_LIBPNG
+    select BR2_PACKAGE_SDL
+    help
+      Atari800 is an emulator for the Atari 8-bit computers and this version adds FujiNet support via netsio
+
+      https://github.com/mozzwald/atari800
