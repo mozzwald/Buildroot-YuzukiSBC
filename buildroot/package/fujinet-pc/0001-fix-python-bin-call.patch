@@ -1,0 +1,11 @@
+--- a/fujinet_pc.cmake
++++ b/fujinet_pc.cmake
+@@ -483,7 +483,7 @@
+   DEPENDS build_version_pc.py "${CMAKE_SOURCE_DIR}/include/version.h"
+   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+   COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/include"
+-  COMMAND python build_version_pc.py "${CMAKE_SOURCE_DIR}/include/version.h" "${CMAKE_BINARY_DIR}/include/build_version.h"
++  COMMAND ${PYTHON_EXECUTABLE} build_version_pc.py "${CMAKE_SOURCE_DIR}/include/version.h" "${CMAKE_BINARY_DIR}/include/build_version.h"
+   COMMENT "Create build_version.h file"
+   VERBATIM
+ )

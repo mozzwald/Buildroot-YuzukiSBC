@@ -1,0 +1,10 @@
+--- a/fujinet_pc.cmake	2025-04-29 17:12:24.272374465 -0500
++++ b/fujinet_pc.cmake  2025-04-29 17:14:25.839947682 -0500
+@@ -505,7 +505,7 @@
+       FUJINET_BUILD_BOARD=${FUJINET_BUILD_BOARD}
+       FUJINET_BUILD_PLATFORM=${FUJINET_BUILD_PLATFORM}
+       BUILD_DATA_DIR=${BUILD_DATA_DIR}
+-      python3 build_webui.py
++      ${PYTHON_EXECUTABLE} build_webui.py
+ )
+ add_custom_target(build_webui DEPENDS "${BUILD_DATA_DIR}")

@@ -1,0 +1,13 @@
+--- a/fujinet_pc.cmake	2025-04-29 16:04:49.904777416 -0500
++++ b/fujinet_pc.cmake	2025-04-29 16:08:59.731859450 -0500
+@@ -435,6 +435,10 @@
+     target_link_libraries(fujinet crypt32)
+ endif()
+ 
++# On Unix systems libdl is required for dlopen()/dlclose()
++if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
++    target_link_libraries(fujinet dl)
++endif()
+ 
+ target_include_directories(fujinet PRIVATE ${INCLUDE_DIRS} ${MBEDTLS_INCLUDE_DIR})
+ target_link_libraries(fujinet ${CRYPTO_LIBS})
