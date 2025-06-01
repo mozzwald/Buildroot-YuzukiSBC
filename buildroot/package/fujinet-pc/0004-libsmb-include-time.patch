@@ -1,0 +1,15 @@
+--- a/components_pc/libsmb2/include/libsmb2-private.h	2025-06-01 17:47:09.566262358 -0500
++++ b/components_pc/libsmb2/include/libsmb2-private.h	2025-06-01 17:50:53.400778141 -0500
+@@ -23,10 +23,10 @@
+ #include "config.h"
+ #endif
+ 
+-#if defined(PS2_EE_PLATFORM) || defined(PS3_PPU_PLATFORM) || defined(ESP_PLATFORM) || defined(PICO_PLATFORM) || defined(__APPLE__) || defined(PS4_PLATFORM)
++//#if defined(PS2_EE_PLATFORM) || defined(PS3_PPU_PLATFORM) || defined(ESP_PLATFORM) || defined(PICO_PLATFORM) || defined(__APPLE__) || defined(PS4_PLATFORM)
+ /* We need this for time_t */
+ #include <time.h>
+-#endif
++//#endif
+ 
+ #ifdef __cplusplus
+ extern "C" {

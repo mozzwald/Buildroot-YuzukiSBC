@@ -1,0 +1,17 @@
+--- a/lib/FileSystem/fnFileCache.cpp	2025-06-01 17:47:09.598263508 -0500
++++ b/lib/FileSystem/fnFileCache.cpp	2025-06-01 17:55:22.793074157 -0500
+@@ -14,11 +14,11 @@
+ 
+ #include "../../include/debug.h"
+ 
+-#ifdef ESP_PLATFORM
++//#ifdef ESP_PLATFORM
+ #include <sys/time.h>
+-#else
++//#else
+ #include "compat_gettimeofday.h"
+-#endif
++//#endif
+ 
+ #include "fnFileMem.h"
+ #include "fnFsSD.h"
