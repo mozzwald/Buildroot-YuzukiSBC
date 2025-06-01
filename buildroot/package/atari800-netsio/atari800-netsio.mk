@@ -13,7 +13,9 @@ define ATARI800_NETSIO_CONFIGURE_CMDS
     PATH="$(HOST_DIR)/bin:$$PATH" \
     ./configure \
         ac_cv_c_bigendian=no  \
-	--program-suffix="-netsio" \
+	    --program-suffix="-netsio" \
+        --disable-shared \
+        --enable-static \
         --prefix=/usr \
         --host=$(GNU_TARGET_NAME) \
         --build=$(GNU_HOST_NAME) \
@@ -34,7 +36,7 @@ define ATARI800_NETSIO_CONFIGURE_CMDS
         CFLAGS="-DDEBUG -DDEBUG2 -O3 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard \
             -ftree-vectorize -flto --sysroot=$(STAGING_DIR)" \
         CPPFLAGS="--sysroot=$(STAGING_DIR)" \
-        LDFLAGS="--sysroot=$(STAGING_DIR)"
+        LDFLAGS="--sysroot=$(STAGING_DIR) -static"
 endef
 
 define ATARI800_NETSIO_BUILD_CMDS

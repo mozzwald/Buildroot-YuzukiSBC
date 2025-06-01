@@ -28,6 +28,8 @@ define FUJINET_PC_BUILD_CMDS
 		PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" \
 		cd $(@D) && \
 		./build.sh -c -p ATARI -y -- \
+		   -DBUILD_SHARED_LIBS=OFF \
+		   -DCMAKE_FIND_LIBRARY_SUFFIXES=".a" \
 		   -DCMAKE_TOOLCHAIN_FILE=$(HOST_DIR)/share/buildroot/toolchainfile.cmake \
 		   -DMBEDTLS_ROOT_DIR=$(STAGING_DIR)/usr/lib \
 		   -DPYTHON_EXECUTABLE=$(HOST_DIR)/bin/python3
