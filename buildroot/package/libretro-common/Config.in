@@ -1,0 +1,7 @@
+config BR2_PACKAGE_LIBRETRO_COMMON
+    bool "libretro-common"
+    help
+      Reusable coding blocks useful for libretro core and frontend
+      development, written primarily in C. Provides shared headers and
+      source files required by all libretro cores. Permissively licensed.
+
